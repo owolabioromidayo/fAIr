@@ -11,7 +11,7 @@ from login.models import OsmUser
 from rest_framework import status
 from rest_framework.test import APILiveServerTestCase, RequestsClient
 
-API_BASE = "http://0.0.0.0:8000/api/v1"
+API_BASE = "http://testserver/api/v1"
 
 headersList = {
     "accept": "application/json",
