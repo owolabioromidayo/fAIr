@@ -1,18 +1,8 @@
 [run]
-omit = 
-    *migrations* 
-    *tests*
-    manage.py 
-    */admin.py 
-    */settings.py 
-    */wsgi.py 
-    */asgi.py 
-    *.txt 
-    *.html
-    */celery.py
-
+omit = *migrations*, *tests* manage.py */admin.py
 plugins = django_coverage_plugin
 source = . 
+
 
 [report]
 show_missing = True
