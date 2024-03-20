@@ -23,7 +23,7 @@ json_type_header = {
 }
 
 
-def generate_payload(feedback_aoi_id, model, osm_user):
+def generate_payload(model, osm_user):
     """Generate JSON payload for HTTP POST at /feedback-label"""
 
     training = Training.objects.create(
@@ -34,7 +34,7 @@ def generate_payload(feedback_aoi_id, model, osm_user):
         batch_size=32,
     )
 
-    FeedbackAOI.objects.create(
+    feedback_aoi = FeedbackAOI.objects.create(
         user=osm_user,
         training=training,
         source_imagery="http://example.com/aoi_image.png",
@@ -59,7 +59,7 @@ def generate_payload(feedback_aoi_id, model, osm_user):
                 ]
             ],
         },
-        "feedback_aoi": feedback_aoi_id,
+        "feedback_aoi": feedback_aoi.id,
     }
 
 
@@ -92,7 +92,7 @@ class FeedbackLabelTest(APILiveServerTestCase):
 
     def test_feedback_label_create_and_delete(self):
         """Create a FeedbackLabel object then DELETE it."""
-        payload = generate_payload(1, self.model, self.osm_user)
+        payload = generate_payload(self.model, self.osm_user)
 
         res = self.client.post(
             f"{API_BASE}/feedback-label/", json.dumps(payload), headers=json_type_header
@@ -107,7 +107,7 @@ class FeedbackLabelTest(APILiveServerTestCase):
 
     def test_feedback_label_create_and_list(self):
         """Create a FeedbackLabel object then GET all FeedbackLabel objects."""
-        payload = generate_payload(2, self.model, self.osm_user)
+        payload = generate_payload(self.model, self.osm_user)
 
         res = self.client.post(
             f"{API_BASE}/feedback-label/", json.dumps(payload), headers=json_type_header
@@ -122,7 +122,7 @@ class FeedbackLabelTest(APILiveServerTestCase):
     def test_feedback_label_create_and_partial_update(self):
         """Create a FeedbackAOI object then update it."""
 
-        payload_one = generate_payload(3, self.model, self.osm_user)
+        payload_one = generate_payload(self.model, self.osm_user)
 
         res = self.client.post(
             f"{API_BASE}/feedback-label/",
@@ -151,7 +151,7 @@ class FeedbackLabelTest(APILiveServerTestCase):
     def test_feedback_label_create_and_read(self):
         """Create a FeedbackLabel object then GET that object by id."""
 
-        payload = generate_payload(4, self.model, self.osm_user)
+        payload = generate_payload(self.model, self.osm_user)
 
         res = self.client.post(
             f"{API_BASE}/feedback-label/", json.dumps(payload), headers=json_type_header

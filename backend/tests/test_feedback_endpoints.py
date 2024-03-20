@@ -23,10 +23,10 @@ json_type_header = {
 }
 
 
-def generate_payload(training_id, model, osm_user):
+def generate_payload(model, osm_user):
     """Generate JSON payload for HTTP POST at /feedback"""
 
-    Training.objects.create(
+    training = Training.objects.create(
         model=model,
         zoom_level=[19, 20, 21, 22],
         created_by=osm_user,
@@ -48,7 +48,7 @@ def generate_payload(training_id, model, osm_user):
             ],
         },
         "source_imagery": "http://example.com",
-        "training": training_id,
+        "training": training.id,
         "zoom_level": 18,
         "feedback_type": "TP",
     }
@@ -88,7 +88,7 @@ class FeedbackTest(APILiveServerTestCase):
     def test_feedback_create_and_delete(self):
         """Create a Feedback object then DELETE it."""
 
-        payload = generate_payload(1, self.model, self.osm_user)
+        payload = generate_payload(self.model, self.osm_user)
 
         res = self.client.post(
             f"{API_BASE}/feedback/", json.dumps(payload), headers=json_type_header
@@ -104,7 +104,7 @@ class FeedbackTest(APILiveServerTestCase):
     def test_feedback_create_and_list(self):
         """Create a Feedback object then GET all Feedback objects."""
 
-        payload = generate_payload(2, self.model, self.osm_user)
+        payload = generate_payload(self.model, self.osm_user)
 
         res = self.client.post(
             f"{API_BASE}/feedback/", json.dumps(payload), headers=json_type_header
@@ -119,7 +119,7 @@ class FeedbackTest(APILiveServerTestCase):
     def test_feedback_create_and_partial_update(self):
         """Create a Feedback object then update it."""
 
-        payload_one = generate_payload(3, self.model, self.osm_user)
+        payload_one = generate_payload(self.model, self.osm_user)
 
         res = self.client.post(
             f"{API_BASE}/feedback/", json.dumps(payload_one), headers=json_type_header
@@ -143,7 +143,7 @@ class FeedbackTest(APILiveServerTestCase):
     def test_feedback_create_and_read(self):
         """Create a FeedbackAOI object then GET that object by id."""
 
-        payload = generate_payload(4, self.model, self.osm_user)
+        payload = generate_payload(self.model, self.osm_user)
 
         res = self.client.post(
             f"{API_BASE}/feedback/", json.dumps(payload), headers=json_type_header
@@ -183,7 +183,7 @@ class FeedbackTest(APILiveServerTestCase):
             label_status=1,
         )
 
-        payload = {"training_id": 5, "epochs": 4, "batch_size": 8, "zoom_level": [20]}
+        payload = {"training_id": training.id, "epochs": 4, "batch_size": 8, "zoom_level": [20]}
 
         res = self.client.post(
             f"{API_BASE}/feedback/training/submit/",

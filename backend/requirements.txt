@@ -23,3 +23,4 @@ osmconflator
 orthogonalizer
 fairpredictor==0.0.26
 tflite-runtime==2.14.0
+django_coverage_plugin==3.1.0
