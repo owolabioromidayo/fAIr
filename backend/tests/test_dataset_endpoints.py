@@ -1,11 +1,10 @@
-from django.contrib.gis.geos import Polygon
-from login.models import OsmUser
-
 import json
 import os
 
+from login.models import OsmUser
 from rest_framework import status
 from rest_framework.test import APILiveServerTestCase, RequestsClient
+from model_bakery import baker
 
 API_BASE = "http://testserver/api/v1"
 
@@ -41,14 +40,14 @@ class DatasetTest(APILiveServerTestCase):
     POST /dataset/
 
     GET /dataset/:id
-    PUT /dataset/:id
+    # PUT /dataset/:id
     PATCH /dataset/:id
     DELETE /dataset/:id
 
     """
 
     def setUp(self):
-        self.osm_user = OsmUser.objects.create(osm_id="12948", username="testUser")
+        self.osm_user = baker.make(OsmUser, osm_id="12948", username="testUser")
         self.client = RequestsClient()
 
     def test_dataset_create_and_delete(self):
@@ -68,7 +67,7 @@ class DatasetTest(APILiveServerTestCase):
         self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)
 
     def test_dataset_create_and_list(self):
-        """Create a Dataset object then GET all Feedback objects."""
+        """Create a Dataset object then GET all Dataset objects."""
 
         payload = generate_payload(2)
 

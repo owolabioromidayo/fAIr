@@ -2,6 +2,7 @@ from core.models import Dataset, Model, Training, FeedbackAOI
 
 from django.contrib.gis.geos import Polygon
 from login.models import OsmUser
+from model_bakery import baker
 
 import json
 import os
@@ -26,7 +27,8 @@ json_type_header = {
 def generate_payload(model, osm_user):
     """Generate JSON payload for HTTP POST at /feedback"""
 
-    training = Training.objects.create(
+    training = baker.make(
+        Training,
         model=model,
         zoom_level=[19, 20, 21, 22],
         created_by=osm_user,
@@ -72,12 +74,14 @@ class FeedbackTest(APILiveServerTestCase):
     """
 
     def setUp(self):
-        self.osm_user = OsmUser.objects.create(osm_id="12948", username="testUser")
-        self.dataset = Dataset.objects.create(
+        self.osm_user = baker.make(OsmUser, osm_id="12948", username="testUser")
+        self.dataset = baker.make(
+            Dataset,
             name="Test Dataset",
             created_by=self.osm_user,
         )
-        self.model = Model.objects.create(
+        self.model = baker.make(
+            Model,
             name="Test Model",
             created_by=self.osm_user,
             dataset=self.dataset,
@@ -163,7 +167,8 @@ class FeedbackTest(APILiveServerTestCase):
     def test_feedback_training_submit_create(self):
         """Create a payload and send a POST request to /feedback/training/submit/ ."""
 
-        training = Training.objects.create(
+        training = baker.make(
+            Training,
             model=self.model,
             zoom_level=[19, 20, 21, 22],
             created_by=self.osm_user,
@@ -172,7 +177,8 @@ class FeedbackTest(APILiveServerTestCase):
             status="FINISHED",
         )
 
-        FeedbackAOI.objects.create(
+        baker.make(
+            FeedbackAOI, 
             user=self.osm_user,
             training=training,
             source_imagery="http://example.com/aoi_image.png",

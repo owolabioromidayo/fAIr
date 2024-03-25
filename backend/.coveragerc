@@ -1,5 +1,12 @@
 [run]
-omit = *migrations*, *tests* manage.py */admin.py
+omit = 
+    *migrations* 
+    *tests* 
+    manage.py 
+    */admin.py 
+    *.txt 
+    *.html
+    
 plugins = django_coverage_plugin
 source = . 
 
